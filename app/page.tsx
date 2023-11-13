@@ -1,7 +1,7 @@
 'use client'
-
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import debounce from 'lodash.debounce'
+import { motion, AnimatePresence } from 'framer-motion'
 import Header from '@/components/Header/Header'
 import SearchComponent from '@/components/SearchComponent/SearchComponent'
 import FilterComponent from '@/components/FilterComponent/FilterComponent'
@@ -14,12 +14,75 @@ const Home: React.FC = () => {
   const [selectedRegion, setSelectedRegion] = useState<string>('')
   const [results, setResults] = useState<Country[]>([])
   const [isSearching, setIsSearching] = useState<boolean>(false)
+  const [page, setPage] = useState<number>(1)
+  const loader = useRef<HTMLDivElement | null>(null)
+
+  // Function to fetch initial set of countries
+  const fetchInitialCountries = async () => {
+    setIsSearching(true)
+    try {
+      const fetchedCountries = await countriesService.fetchCountries(1, 10) // Fetch first page of countries
+      setResults(fetchedCountries)
+      setPage(2) // Set the next page to be fetched
+    } catch (error) {
+      console.error('Failed to fetch initial set of countries:', error)
+    } finally {
+      setIsSearching(false)
+    }
+  }
+
+  const fetchMoreCountries = async () => {
+    try {
+      const fetchedCountries = await countriesService.fetchCountries(page, 10) // Modify to fetch next set of countries
+      setResults((prevResults) => [...prevResults, ...fetchedCountries])
+      setPage(page + 1) // Increment page number for next API call
+    } catch (error) {
+      console.error('Failed to fetch more countries:', error)
+    }
+  }
+
+  const handleObserver = useCallback(
+    (entities: IntersectionObserverEntry[]) => {
+      const target = entities[0]
+      if (target.isIntersecting) {
+        fetchMoreCountries()
+      }
+    },
+    [page]
+  )
+
+  useEffect(() => {
+    const option = {
+      root: null,
+      rootMargin: '20px',
+      threshold: 0
+    }
+    const observer = new IntersectionObserver(handleObserver, option)
+    if (loader.current) observer.observe(loader.current)
+
+    return () => {
+      if (loader.current) observer.unobserve(loader.current)
+    }
+  }, [handleObserver])
+
+  const debouncedSearch = useCallback(
+    debounce((newSearchTerm: string) => {
+      handleSearch(newSearchTerm)
+      setSelectedRegion('') // Reset the region filter when searching
+    }, 300),
+    []
+  )
+
+  const handleSearchTermChange = (newSearchTerm: string) => {
+    setSearchTerm(newSearchTerm)
+    debouncedSearch(newSearchTerm)
+  }
 
   // Function to fetch all countries
   const fetchAllCountries = async () => {
     setIsSearching(true)
     try {
-      const fetchedCountries = await countriesService.fetchCountries(1, 250) // Increase the pageSize if needed to fetch all countries
+      const fetchedCountries = await countriesService.fetchCountries(1, 10) // Increase the pageSize if needed to fetch all countries
       setResults(fetchedCountries)
     } catch (error) {
       console.error('Failed to fetch all countries:', error)
@@ -51,7 +114,7 @@ const Home: React.FC = () => {
 
   const handleRegionChange = async (region: string) => {
     setSelectedRegion(region)
-    if (region === '') {
+    if (region === 'All') {
       await fetchAllCountries() // Fetch all countries if region is cleared
       return
     }
@@ -66,17 +129,8 @@ const Home: React.FC = () => {
     }
   }
 
-  const debouncedSearch = useCallback(debounce(handleSearch, 300), [])
-
-  // Handler to be called when the search term changes
-  const handleSearchTermChange = (newSearchTerm: string) => {
-    debouncedSearch(newSearchTerm)
-    setSelectedRegion('') // Reset the region filter when searching
-  }
-
-  // useEffect to fetch all countries on initial render
   useEffect(() => {
-    fetchAllCountries()
+    fetchInitialCountries() // Fetch the initial set of countries on mount
   }, [])
 
   return (
@@ -91,12 +145,22 @@ const Home: React.FC = () => {
           />
         </div>
         {isSearching && <div className="text-center">Searching...</div>}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-14">
-          {!isSearching &&
-            results.map((country) => (
-              <CountryCard key={country.alpha2Code} country={country} />
-            ))}
-        </div>
+        <AnimatePresence>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-14">
+            {!isSearching &&
+              results.map((country) => (
+                <motion.div
+                  key={country.alpha2Code}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <CountryCard country={country} />
+                </motion.div>
+              ))}
+          </div>
+        </AnimatePresence>
+        <div ref={loader} />
       </main>
     </div>
   )
