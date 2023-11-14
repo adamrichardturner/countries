@@ -8,6 +8,7 @@ import FilterComponent from '@/components/FilterComponent/FilterComponent'
 import CountryCard from '@/components/CountryCard/CountryCard'
 import { Country } from '@/interfaces'
 import countriesService from '../services/countries' // Make sure this import matches the actual file path
+import Link from 'next/link'
 
 const Home: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('')
@@ -22,6 +23,7 @@ const Home: React.FC = () => {
     setIsSearching(true)
     try {
       const fetchedCountries = await countriesService.fetchCountries(1, 10) // Fetch first page of countries
+      console.log(fetchedCountries)
       setResults(fetchedCountries)
       setPage(2) // Set the next page to be fetched
     } catch (error) {
@@ -149,17 +151,24 @@ const Home: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-14">
             {!isSearching &&
               results.map((country) => (
-                <motion.div
-                  key={country.alpha2Code}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
+                <Link
+                  href={`/country/${encodeURIComponent(country.cca2)}`}
+                  passHref
+                  key={country.cca2}
                 >
-                  <CountryCard country={country} />
-                </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    style={{ display: 'block' }} // Ensure this is clickable
+                  >
+                    <CountryCard country={country} />
+                  </motion.div>
+                </Link>
               ))}
           </div>
         </AnimatePresence>
+
         <div ref={loader} />
       </main>
     </div>

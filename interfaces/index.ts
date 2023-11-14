@@ -14,7 +14,7 @@ export interface Country {
   population: number
   region: string
   capital: string
-  alpha2Code: string
+  cca2: string
 }
 
 export interface CountryCardProps {

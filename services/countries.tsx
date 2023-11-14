@@ -80,12 +80,12 @@ const fetchCountriesByName = async (
 }
 
 /**
- * Fetches details of a specific country from the REST Countries API using the country's alpha2 code.
+ * Fetches details of a specific country from the REST Countries API using the country's cca2 code.
  *
  * This asynchronous function sends an HTTP GET request to the REST Countries API and retrieves
- * the data for a single country that matches the provided alpha2 code.
+ * the data for a single country that matches the provided cca2 code.
  *
- * @param {string} alpha2 - The two-letter country code (alpha2 code) used to identify the country.
+ * @param {string} cca2 - The two-letter country code (cca2 code) used to identify the country.
  * @returns {Promise<Country>} A promise that resolves to the Country object.
  * @throws {Error} Throws an error if the HTTP request fails or if the country cannot be found.
  *
@@ -96,9 +96,10 @@ const fetchCountriesByName = async (
  *   .catch(error => console.error(error));
  * ```
  */
-const fetchCountry = async (alpha2: string): Promise<Country> => {
+const fetchCountry = async (cca2: string): Promise<Country> => {
   try {
-    const response = await api.get<Country>(`/${alpha2}`)
+    const response = await api.get<Country>(`/alpha/${cca2}`)
+    console.log(response)
     return response.data
   } catch (error) {
     throw error
