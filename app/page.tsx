@@ -7,7 +7,7 @@ import SearchComponent from '@/components/SearchComponent/SearchComponent'
 import FilterComponent from '@/components/FilterComponent/FilterComponent'
 import CountryCard from '@/components/CountryCard/CountryCard'
 import { Country } from '@/interfaces'
-import countriesService from '../services/countries' // Make sure this import matches the actual file path
+import countriesService from '../services/countries'
 import Link from 'next/link'
 
 const Home: React.FC = () => {
@@ -22,10 +22,10 @@ const Home: React.FC = () => {
   const fetchInitialCountries = async () => {
     setIsSearching(true)
     try {
-      const fetchedCountries = await countriesService.fetchCountries(1, 10) // Fetch first page of countries
+      const fetchedCountries = await countriesService.fetchCountries(1, 10)
       console.log(fetchedCountries)
       setResults(fetchedCountries)
-      setPage(2) // Set the next page to be fetched
+      setPage(2)
     } catch (error) {
       console.error('Failed to fetch initial set of countries:', error)
     } finally {
@@ -35,9 +35,9 @@ const Home: React.FC = () => {
 
   const fetchMoreCountries = async () => {
     try {
-      const fetchedCountries = await countriesService.fetchCountries(page, 10) // Modify to fetch next set of countries
+      const fetchedCountries = await countriesService.fetchCountries(page, 10)
       setResults((prevResults) => [...prevResults, ...fetchedCountries])
-      setPage(page + 1) // Increment page number for next API call
+      setPage(page + 1)
     } catch (error) {
       console.error('Failed to fetch more countries:', error)
     }
@@ -70,7 +70,7 @@ const Home: React.FC = () => {
   const debouncedSearch = useCallback(
     debounce((newSearchTerm: string) => {
       handleSearch(newSearchTerm)
-      setSelectedRegion('') // Reset the region filter when searching
+      setSelectedRegion('')
     }, 300),
     []
   )
@@ -84,7 +84,7 @@ const Home: React.FC = () => {
   const fetchAllCountries = async () => {
     setIsSearching(true)
     try {
-      const fetchedCountries = await countriesService.fetchCountries(1, 10) // Increase the pageSize if needed to fetch all countries
+      const fetchedCountries = await countriesService.fetchCountries(1, 10)
       setResults(fetchedCountries)
     } catch (error) {
       console.error('Failed to fetch all countries:', error)
@@ -96,7 +96,7 @@ const Home: React.FC = () => {
   const handleSearch = async (term: string) => {
     setSearchTerm(term)
     if (term.trim() === '') {
-      await fetchAllCountries() // Fetch all countries if search term is empty
+      await fetchAllCountries()
       return
     }
     setIsSearching(true)
@@ -160,7 +160,7 @@ const Home: React.FC = () => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    style={{ display: 'block' }} // Ensure this is clickable
+                    style={{ display: 'block' }}
                   >
                     <CountryCard country={country} />
                   </motion.div>
