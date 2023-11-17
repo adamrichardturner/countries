@@ -1,3 +1,5 @@
+// interfaces/index.ts
+
 export interface CountryName {
   common: string
   official: string
@@ -13,8 +15,9 @@ export interface Country {
   flags: CountryFlags
   population: number
   region: string
-  capital: string
+  capital: string[]
   cca2: string
+  cca3: string // Add this if you use cca3 as a unique identifier
 }
 
 export interface CountryCardProps {
@@ -40,6 +43,7 @@ export interface CountryDetailProps {
 }
 
 export interface SearchComponentProps {
+  searchTerm: string
   onSearchTermChange: (searchTerm: string) => void
 }
 

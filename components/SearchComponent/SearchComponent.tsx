@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 
 const SearchComponent: React.FC<SearchComponentProps> = ({
+  searchTerm,
   onSearchTermChange
 }) => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -17,6 +18,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
       />
       <input
         type="text"
+        value={searchTerm}
         onChange={handleChange}
         placeholder="Search for a country..."
         className="rounded-lg w-full h-full bg-transparent focus:outline-none dark:placeholder:text-white placeholder:text-sm"

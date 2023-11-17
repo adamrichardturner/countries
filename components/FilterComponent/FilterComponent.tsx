@@ -16,6 +16,10 @@ const FilterComponent: FC<FilterComponentProps> = ({
   onRegionChange
 }) => {
   const handleRegionChange = (region: string) => {
+    // Check if the selected region is 'Filter by Region' and set it to 'All'
+    if (region === 'Filter by Region') {
+      region = ''
+    }
     onRegionChange(region)
   }
 

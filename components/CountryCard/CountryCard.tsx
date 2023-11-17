@@ -1,24 +1,58 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import Image from 'next/image'
 import { CountryCardProps } from '@/interfaces'
 
 const CountryCard: FC<CountryCardProps> = ({ country }) => {
-  const countryName = country.name.common || country.name.official
+  const countryName = country.name.official || country.name.common
+  // In your component where you render the cards
+  useEffect(() => {
+    // Function to calculate and set minimum height
+    const setMinHeightToCards = () => {
+      const cards = document.querySelectorAll(
+        '.card'
+      ) as NodeListOf<HTMLElement> // Typecast as HTMLElement
+      let maxHeight = 0
+
+      // Calculate the maximum height among all cards
+      cards.forEach((card) => {
+        const cardHeight = card.clientHeight
+        if (cardHeight > maxHeight) {
+          maxHeight = cardHeight
+        }
+      })
+
+      // Set the maximum height to all cards
+      cards.forEach((card) => {
+        card.style.minHeight = `${maxHeight}px`
+      })
+    }
+
+    // Call the function initially
+    setMinHeightToCards()
+
+    // Attach an event listener for window resize (optional)
+    window.addEventListener('resize', setMinHeightToCards)
+
+    // Clean up the event listener on unmount (optional)
+    return () => {
+      window.removeEventListener('resize', setMinHeightToCards)
+    }
+  }, [])
 
   return (
-    <article className="card rounded-lg shadow-md min-h-fit bg-white dark:bg-dark-blue flex-1">
-      <div className="flag-container relative w-full h-40 overflow-hidden">
+    <article className="card rounded-lg shadow-md bg-white dark:bg-dark-blue flex flex-1 flex-col h-full">
+      <div className="relative overflow-hidden h-40">
+        {/* Display the country flag */}
         <Image
           src={country.flags.svg || country.flags.png}
           alt={`${countryName} Flag`}
           layout="fill"
           objectFit="cover"
-          objectPosition="center"
           className="rounded-t-lg"
         />
       </div>
-      <div className="info p-4 bg-white dark:bg-dark-blue rounded-b-lg space-y-3 pb-12 h-full">
-        <h3 className="text-lg font-bold">{countryName}</h3>
+      <div className="p-4 bg-white dark:bg-dark-blue rounded-b-lg">
+        <h3 className="leading-none  pb-4 text-lg font-bold">{countryName}</h3>
         <div className="text-very-dark-blue-text dark:text-white">
           <p>
             <span className="font-semibold">Population:</span>{' '}

@@ -1,6 +1,5 @@
 'use client'
-import { useState, useEffect, useCallback, useRef } from 'react'
-import debounce from 'lodash.debounce'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Header from '@/components/Header/Header'
 import SearchComponent from '@/components/SearchComponent/SearchComponent'
@@ -11,165 +10,134 @@ import countriesService from '../services/countries'
 import Link from 'next/link'
 
 const Home: React.FC = () => {
+  const [allCountries, setAllCountries] = useState<Country[]>([])
+  const [displayedCountries, setDisplayedCountries] = useState<Country[]>([])
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [selectedRegion, setSelectedRegion] = useState<string>('')
-  const [results, setResults] = useState<Country[]>([])
-  const [isSearching, setIsSearching] = useState<boolean>(false)
-  const [page, setPage] = useState<number>(1)
+  const [isFetching, setIsFetching] = useState<boolean>(true)
+  const [pageSize] = useState<number>(50)
+  const [pageEndIndex, setPageEndIndex] = useState<number>(pageSize)
+
   const loader = useRef<HTMLDivElement | null>(null)
 
-  // Function to fetch initial set of countries
-  const fetchInitialCountries = async () => {
-    setIsSearching(true)
-    try {
-      const fetchedCountries = await countriesService.fetchCountries(1, 10)
-      console.log(fetchedCountries)
-      setResults(fetchedCountries)
-      setPage(2)
-    } catch (error) {
-      console.error('Failed to fetch initial set of countries:', error)
-    } finally {
-      setIsSearching(false)
-    }
-  }
-
-  const fetchMoreCountries = async () => {
-    try {
-      const fetchedCountries = await countriesService.fetchCountries(page, 10)
-      setResults((prevResults) => [...prevResults, ...fetchedCountries])
-      setPage(page + 1)
-    } catch (error) {
-      console.error('Failed to fetch more countries:', error)
-    }
-  }
-
-  const handleObserver = useCallback(
-    (entities: IntersectionObserverEntry[]) => {
-      const target = entities[0]
-      if (target.isIntersecting) {
-        fetchMoreCountries()
-      }
-    },
-    [page]
-  )
-
-  useEffect(() => {
-    const option = {
-      root: null,
-      rootMargin: '20px',
-      threshold: 0
-    }
-    const observer = new IntersectionObserver(handleObserver, option)
-    if (loader.current) observer.observe(loader.current)
-
-    return () => {
-      if (loader.current) observer.unobserve(loader.current)
-    }
-  }, [handleObserver])
-
-  const debouncedSearch = useCallback(
-    debounce((newSearchTerm: string) => {
-      handleSearch(newSearchTerm)
-      setSelectedRegion('')
-    }, 300),
-    []
-  )
-
-  const handleSearchTermChange = (newSearchTerm: string) => {
-    setSearchTerm(newSearchTerm)
-    debouncedSearch(newSearchTerm)
-  }
-
-  // Function to fetch all countries
   const fetchAllCountries = async () => {
-    setIsSearching(true)
+    setIsFetching(true)
     try {
-      const fetchedCountries = await countriesService.fetchCountries(1, 10)
-      setResults(fetchedCountries)
+      const response = await countriesService.fetchAllCountries()
+      const data = response.data
+      setAllCountries(data)
+      setIsFetching(false)
     } catch (error) {
       console.error('Failed to fetch all countries:', error)
-    } finally {
-      setIsSearching(false)
+      setIsFetching(false)
     }
   }
 
-  const handleSearch = async (term: string) => {
-    setSearchTerm(term)
-    if (term.trim() === '') {
-      await fetchAllCountries()
-      return
-    }
-    setIsSearching(true)
-    try {
-      const fetchedCountries = await countriesService.fetchCountriesByName(
-        term,
-        1,
-        10
-      ) // Assuming this is the correct service function
-      setResults(fetchedCountries)
-    } catch (error) {
-      console.error('Failed to fetch countries:', error)
-    } finally {
-      setIsSearching(false)
-    }
-  }
-
-  const handleRegionChange = async (region: string) => {
-    setSelectedRegion(region)
-    if (region === 'All') {
-      await fetchAllCountries() // Fetch all countries if region is cleared
-      return
-    }
-    setIsSearching(true)
-    try {
-      const fetchedCountries = await countriesService.fetchByRegion(region)
-      setResults(fetchedCountries)
-    } catch (error) {
-      console.error('Failed to fetch countries by region:', error)
-    } finally {
-      setIsSearching(false)
-    }
-  }
-
+  // Fetch all countries on component mount
   useEffect(() => {
-    fetchInitialCountries() // Fetch the initial set of countries on mount
+    fetchAllCountries()
   }, [])
+
+  // Filter countries based on searchTerm and selectedRegion
+  useEffect(() => {
+    let filteredCountries = allCountries
+
+    if (selectedRegion !== 'All') {
+      filteredCountries = filteredCountries.filter((country) =>
+        country.region.includes(selectedRegion)
+      )
+    }
+
+    if (searchTerm) {
+      filteredCountries = filteredCountries.filter((country) =>
+        country.name.common.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    }
+
+    setDisplayedCountries(filteredCountries.slice(0, pageEndIndex))
+  }, [allCountries, searchTerm, selectedRegion, pageEndIndex])
+
+  // IntersectionObserver callback for infinite scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const first = entries[0]
+        if (first.isIntersecting) {
+          if (pageEndIndex < allCountries.length) {
+            // Load the next set of countries if not all have been displayed
+            setPageEndIndex((prevIndex) => prevIndex + pageSize)
+          }
+        }
+      },
+      { threshold: 1.0 }
+    )
+
+    if (loader.current) {
+      observer.observe(loader.current)
+    }
+
+    return () => {
+      if (loader.current) {
+        observer.unobserve(loader.current)
+      }
+    }
+  }, [pageSize, allCountries, pageEndIndex])
+
+  // Search handling
+  const handleSearchChange = (newSearchTerm: string) => {
+    setSelectedRegion('')
+    setSearchTerm(newSearchTerm)
+    setPageEndIndex(pageSize) // Reset pagination
+  }
+
+  // Region handling
+  const handleRegionChange = async (newRegion: string) => {
+    setSearchTerm('')
+    setSelectedRegion(newRegion)
+    setPageEndIndex(pageSize) // Reset pagination
+  }
 
   return (
     <div className="bg-very-light-gray dark:bg-very-dark-blue-bg">
       <Header />
       <main className="container min-h-screen p-6">
         <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-          <SearchComponent onSearchTermChange={handleSearchTermChange} />
+          <SearchComponent
+            searchTerm={searchTerm}
+            onSearchTermChange={handleSearchChange}
+          />
           <FilterComponent
             selectedRegion={selectedRegion}
             onRegionChange={handleRegionChange}
           />
         </div>
-        {isSearching && <div className="text-center">Searching...</div>}
-        <AnimatePresence>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-14">
-            {!isSearching &&
-              results.map((country) => (
+        {isFetching ? (
+          <div className="text-center">Loading...</div>
+        ) : (
+          <AnimatePresence>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-14">
+              {displayedCountries.map((country) => (
                 <Link
-                  href={`/country/${encodeURIComponent(country.cca2)}`}
+                  href={`/country/${encodeURIComponent(country.cca3)}`} // Make sure `cca3` is the correct identifier
                   passHref
-                  key={country.cca2}
+                  key={country.cca3}
                 >
                   <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    style={{ display: 'block' }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    layout
                   >
                     <CountryCard country={country} />
                   </motion.div>
                 </Link>
               ))}
-          </div>
-        </AnimatePresence>
-
-        <div ref={loader} />
+            </div>
+          </AnimatePresence>
+        )}
+        {pageEndIndex < allCountries.length && (
+          <div ref={loader} className="loading" />
+        )}
       </main>
     </div>
   )

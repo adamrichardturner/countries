@@ -13,6 +13,34 @@ module.exports = {
       }
     },
     extend: {
+      fontSize: {
+        'body-homepage': '14px',
+        'body-detail': '16px'
+      },
+      fontWeight: {
+        light: '300',
+        semibold: '600',
+        bold: '800'
+      },
+      container: {
+        center: true,
+        padding: '1rem',
+        screens: {
+          sm: '100%', // Full width on small screens
+          md: '100%', // Full width on medium screens
+          lg: '1024px', // Max container width for large screens
+          xl: '1200px', // Max container width for extra large screens
+          '2xl': '1280px' // Max container width for 2xl screens
+        }
+      },
+      screens: {
+        xs: '360px',
+        sm: '600px',
+        md: '1042px',
+        lg: '1292px',
+        xl: '1280px',
+        '2xl': '1536px'
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
