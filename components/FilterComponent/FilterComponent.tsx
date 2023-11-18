@@ -26,7 +26,7 @@ const FilterComponent: FC<FilterComponentProps> = ({
   return (
     <div className="rounded-lg relative bg-white dark:bg-dark-blue flex flex-row border shadow-md border-none w-60">
       <Select value={selectedRegion} onValueChange={handleRegionChange}>
-        <SelectTrigger className="w-[280px] bg-white dark:bg-dark-blue">
+        <SelectTrigger className="w-[280px] h-12 bg-white dark:bg-dark-blue">
           <SelectValue placeholder="Filter by Region" />
         </SelectTrigger>
         <SelectContent className="bg-white dark:bg-dark-blue">
