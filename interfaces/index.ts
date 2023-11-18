@@ -28,7 +28,10 @@ export interface Country {
   currencies: { [currencyCode: string]: { name: string; symbol: string } }
   languages: { [languageCode: string]: string }
   borders?: string[]
-  borderCountries?: string[]
+  borderCountries?: {
+    name: string
+    code: string
+  }[]
 }
 
 export interface CountryCardProps {

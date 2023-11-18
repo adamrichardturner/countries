@@ -40,7 +40,7 @@ const CountryCard: FC<CountryCardProps> = ({ country }) => {
 
   return (
     <article className="card rounded-lg shadow-md bg-white dark:bg-dark-blue flex flex-1 flex-col h-full">
-      <div className="relative overflow-hidden h-40">
+      <div className="relative overflow-hidden h-52 md:h-48 lg:h-36">
         <Image
           src={country.flags.svg || country.flags.png}
           alt={`${countryName} Flag`}

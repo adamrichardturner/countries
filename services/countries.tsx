@@ -78,10 +78,13 @@ export async function fetchCountry(
     let country = (await response.json()) as Country
 
     if (country.borders) {
-      const borderNames = await Promise.all(
-        country.borders.map(fetchCountryNameByCode)
+      const borderCountries = await Promise.all(
+        country.borders.map(async (borderCode) => {
+          const borderCountryName = await fetchCountryNameByCode(borderCode)
+          return { name: borderCountryName, code: borderCode }
+        })
       )
-      country.borderCountries = borderNames
+      country.borderCountries = borderCountries
     }
 
     return country

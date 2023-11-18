@@ -10,9 +10,9 @@ export default async function ({ params }: { params: { countryId: string } }) {
   const country = countryData
 
   return (
-    <div className="bg-very-light-gray dark:bg-very-dark-blue-bg">
+    <div className="bg-very-light-gray dark:bg-very-dark-blue-bg min-h-screen">
       <Header />
-      <main className="container min-h-screen p-6">
+      <main className="container p-6">
         <CountryDetail country={country} />
       </main>
     </div>

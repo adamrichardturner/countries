@@ -99,9 +99,9 @@ const Home: FC = () => {
   }
 
   return (
-    <div className="bg-very-light-gray dark:bg-very-dark-blue-bg">
+    <div className="bg-very-light-gray dark:bg-very-dark-blue-bg min-h-screen">
       <Header />
-      <main className="container min-h-screen p-6">
+      <main className="container p-6">
         <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
           <SearchComponent
             searchTerm={searchTerm}
@@ -116,7 +116,7 @@ const Home: FC = () => {
           <div className="text-center">Loading...</div>
         ) : (
           <AnimatePresence>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-14">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-20">
               {displayedCountries.map((country) => (
                 <Link
                   href={`/country/${encodeURIComponent(country.cca3)}`}
