@@ -19,7 +19,7 @@ Users should be able to:
 
 ### Screenshot Preview
 
-![](./screenshot.jpg)
+![](./screenshot.png)
 
 ### Links
 
