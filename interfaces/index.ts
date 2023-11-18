@@ -1,5 +1,3 @@
-// interfaces/index.ts
-
 export interface CountryName {
   common: string
   official: string
@@ -17,29 +15,38 @@ export interface Country {
   region: string
   capital: string[]
   cca2: string
-  cca3: string // Add this if you use cca3 as a unique identifier
-}
-
-export interface CountryCardProps {
-  country: Country
-}
-
-export interface CountryDetail {
-  name: CountryName
-  flags: CountryFlags
+  cca3: string
   nativeName: string
-  population: number
-  region: string
   subRegion: string
-  capital: string
   tld: string
   currencies: string[]
   languages: string[]
   borderCountries: string[]
 }
 
+export interface CountryCardProps {
+  country: Country
+}
+
 export interface CountryDetailProps {
-  country: CountryDetail
+  country: Country
+}
+
+export interface FetchCountriesParams {
+  page: number
+  pageSize: number
+}
+
+export interface FetchCountriesByNameParams extends FetchCountriesParams {
+  searchTerm: string
+}
+
+export interface FetchCountryParams {
+  countryId: string
+}
+
+export interface FetchByRegionParams {
+  region: string
 }
 
 export interface SearchComponentProps {

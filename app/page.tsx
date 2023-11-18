@@ -15,7 +15,7 @@ const Home: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [selectedRegion, setSelectedRegion] = useState<string>('')
   const [isFetching, setIsFetching] = useState<boolean>(true)
-  const [pageSize] = useState<number>(50)
+  const [pageSize] = useState<number>(25)
   const [pageEndIndex, setPageEndIndex] = useState<number>(pageSize)
 
   const loader = useRef<HTMLDivElement | null>(null)
@@ -38,7 +38,6 @@ const Home: React.FC = () => {
     fetchAllCountries()
   }, [])
 
-  // Filter countries based on searchTerm and selectedRegion
   useEffect(() => {
     let filteredCountries = allCountries
 
