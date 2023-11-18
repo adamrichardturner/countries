@@ -1,50 +1,13 @@
-import { Country } from '@/interfaces'
-
-interface CountryName {
-  common: string
-  official: string
-}
-
-interface CountryFlags {
-  svg: string
-  png: string
-}
-
-interface FetchCountriesParams {
-  page: number
-  pageSize: number
-}
-
-interface FetchCountriesByNameParams {
-  searchTerm: string
-  page: number
-  pageSize: number
-}
-
-interface FetchCountryParams {
-  countryId: string
-}
-
-interface FetchByRegionParams {
-  region: string
-}
+import {
+  Country,
+  FetchCountriesParams,
+  FetchCountriesByNameParams,
+  FetchCountryParams,
+  FetchByRegionParams
+} from '@/interfaces'
 
 const baseUrl = `https://restcountries.com/v3.1/`
-const query = `?fields=name,flags,nativeName,population,region,subRegion,capital,tld,currencies,languages,borderCountries,cca3`
-
-export interface CountryDetail {
-  name: CountryName
-  flags: CountryFlags
-  nativeName: string
-  population: number
-  region: string
-  subRegion: string
-  capital: string
-  tld: string
-  currencies: string[]
-  languages: string[]
-  borderCountries: string[]
-}
+const query = `?fields=name,flags,nativeName,population,region,subRegion,capital,tld,currencies,languages,borders,borderCountries,cca3`
 
 async function fetchAllCountries() {
   const response = await fetch(`${baseUrl}all${query}`)
@@ -79,11 +42,32 @@ export async function fetchCountriesByName({
   return { data }
 }
 
-export async function fetchCountry({ params }: { params: FetchCountryParams }) {
-  const countryId = params.countryId
+async function fetchCountryNameByCode(countryCode: string): Promise<string> {
+  const response = await fetch(`${baseUrl}alpha/${countryCode}?fields=name`)
+  const country = (await response.json()) as { name: CountryName }
+  return country.name.common
+}
+
+export async function fetchCountry(
+  params: FetchCountryParams
+): Promise<Country> {
+  const { countryId } = params
   const response = await fetch(`${baseUrl}alpha/${countryId}${query}`)
-  const data = (await response.json()) as Country
-  return { data }
+  let country = (await response.json()) as Country
+
+  if (country.borders) {
+    try {
+      const borderNames = await Promise.all(
+        country.borders.map(fetchCountryNameByCode)
+      )
+      country.borderCountries = borderNames
+    } catch (error) {
+      console.error('Error fetching border countries', error)
+      throw error
+    }
+  }
+
+  return country
 }
 
 export async function fetchByRegion({

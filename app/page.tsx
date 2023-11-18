@@ -1,5 +1,6 @@
 'use client'
-import { useState, useEffect, useRef } from 'react'
+
+import { FC, useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Header from '@/components/Header/Header'
 import SearchComponent from '@/components/SearchComponent/SearchComponent'
@@ -9,7 +10,7 @@ import { Country } from '@/interfaces'
 import countriesService from '../services/countries'
 import Link from 'next/link'
 
-const Home: React.FC = () => {
+const Home: FC = () => {
   const [allCountries, setAllCountries] = useState<Country[]>([])
   const [displayedCountries, setDisplayedCountries] = useState<Country[]>([])
   const [searchTerm, setSearchTerm] = useState<string>('')
@@ -38,6 +39,7 @@ const Home: React.FC = () => {
     fetchAllCountries()
   }, [])
 
+  // Filter countries
   useEffect(() => {
     let filteredCountries = allCountries
 
@@ -117,7 +119,7 @@ const Home: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-14">
               {displayedCountries.map((country) => (
                 <Link
-                  href={`/country/${encodeURIComponent(country.cca3)}`} // Make sure `cca3` is the correct identifier
+                  href={`/country/${encodeURIComponent(country.cca3)}`}
                   passHref
                   key={country.cca3}
                 >

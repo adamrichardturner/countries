@@ -1,6 +1,12 @@
+export interface NativeName {
+  official: string
+  common: string
+}
+
 export interface CountryName {
   common: string
   official: string
+  nativeName: { [languageCode: string]: NativeName }
 }
 
 export interface CountryFlags {
@@ -16,12 +22,13 @@ export interface Country {
   capital: string[]
   cca2: string
   cca3: string
-  nativeName: string
+  nativeName: { [languageCode: string]: NativeName }
   subRegion: string
-  tld: string
-  currencies: string[]
-  languages: string[]
-  borderCountries: string[]
+  tld: string[]
+  currencies: { [currencyCode: string]: { name: string; symbol: string } }
+  languages: { [languageCode: string]: string }
+  borders?: string[]
+  borderCountries?: string[]
 }
 
 export interface CountryCardProps {
