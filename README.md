@@ -30,8 +30,8 @@ Users should be able to:
 - [TypeScript](https://www.typescriptlang.org/)
 - [React](https://reactjs.org/) - JS library
 - [Next.js](https://nextjs.org/) - React framework
-  -- App Router
-  -- Server Components and Client Side Components
+  - App Router
+  - Server Components and Client Side Components
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Shadcn](https://ui.shadcn.com/)
 - [Framer Motion](https://www.framer.com/motion/animation/)
