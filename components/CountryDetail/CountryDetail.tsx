@@ -126,30 +126,32 @@ const CountryDetail: FC<CountryDetailProps> = ({ country }) => {
                     <span className="text-sm"> {country.tld[0]}</span>
                   </div>
                 )}
-                {country.currencies && (
+                {country.currencies ? (
                   <div className="flex flex-row space-x-2">
                     <h3 className="text-sm font-semibold">Currencies: </h3>
                     <span className="text-sm">
                       {getCurrenciesDisplay(country.currencies)}
                     </span>
                   </div>
-                )}
-                {country.languages && (
+                ) : null}
+                {country.languages ? (
                   <div className="flex flex-row space-x-2">
                     <h3 className="text-sm font-semibold">Languages: </h3>
                     <span className="text-sm">
                       {getLanguagesDisplay(country.languages)}
                     </span>
                   </div>
-                )}
+                ) : null}
               </div>
             </div>
             {country.borderCountries && (
               <div className="flex flex-col md:flex-row md:items-center md:space-x-3 pt-6 md:pt-0">
-                <span className="leading-none font-bold text-sm pb-4 md:pb-0">
-                  Border Countries:{' '}
-                </span>
-                <div className="flex flex-wrap mt-0">
+                {country.borderCountries.length > 0 ? (
+                  <span className="leading-none font-bold text-sm pb-4 md:pb-0">
+                    Border Countries:{' '}
+                  </span>
+                ) : null}
+                <div className="flex flex-wrap -mx-2">
                   {country.borderCountries &&
                     country.borderCountries.map((borderCountry, index) => (
                       <Link
@@ -161,8 +163,7 @@ const CountryDetail: FC<CountryDetailProps> = ({ country }) => {
                       >
                         <div
                           key={index}
-                          style={minWidthStyle}
-                          className="bg-white rounded-sm dark:bg-dark-blue text-very-dark-blue-text dark:text-white py-1 px-3 shadow-md text-center mr-2 mt-2 first:ml-0"
+                          className="bg-white rounded-sm dark:bg-dark-blue text-very-dark-blue-text dark:text-white py-1 px-2 shadow-md text-center mx-2 mt-2 first:ml-0"
                         >
                           <span className="text-xs">{borderCountry.name}</span>
                         </div>
