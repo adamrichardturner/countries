@@ -58,7 +58,7 @@ const CountryDetail: FC<CountryDetailProps> = ({ country }) => {
         <p>Back</p>
       </div>
       <article className="flex flex-col md:flex-row md:space-x-24 space-y-12 md:space-y-0">
-        <div className="relative object-cover object-center h-52 sm:h-96 w-full md:w-1/2 overflow-hidden">
+        <div className="shadow-md relative object-cover object-center h-52 sm:h-96 w-full md:w-1/2 overflow-hidden">
           {country.flags.svg || country.flags.png ? (
             <Image
               src={country.flags.svg || country.flags.png}
