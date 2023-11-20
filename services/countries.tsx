@@ -13,7 +13,11 @@ const query = `?fields=name,flags,nativeName,population,region,subRegion,capital
 async function fetchAllCountries(): Promise<{ data: Country[] }> {
   try {
     const response = await fetch(`${baseUrl}all${query}`)
-    const data = (await response.json()) as Country[]
+    const data = (await response.json()).sort((a: Country, b: Country) => {
+      if (a.name.official < b.name.official) return -1
+      if (a.name.official > b.name.official) return 1
+      return 0
+    }) as Country[]
     return { data }
   } catch (error) {
     console.error('Error fetching all countries', error)
