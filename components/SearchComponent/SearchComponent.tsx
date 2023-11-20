@@ -11,7 +11,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
   }
 
   return (
-    <div className="rounded-lg bg-white dark:bg-dark-blue w-full md:w-4/12 flex flex-row items-center py-3 focus-within:ring-1 focus-within:ring-offset-1 focus-within:ring-offset-light-blue focus-within:ring-white dark:focus-within:ring-black shadow-md">
+    <div className="rounded-lg bg-white dark:bg-dark-blue w-full md:w-4/12 flex flex-row items-center py-3 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-light-blue focus-within:ring-black dark:focus-within:ring-black shadow-md">
       <FontAwesomeIcon
         icon={faSearch}
         className="text-gray-500 dark:text-white mx-5"

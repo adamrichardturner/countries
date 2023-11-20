@@ -116,7 +116,7 @@ const Home: FC = () => {
           <div className="text-center">Loading...</div>
         ) : (
           <AnimatePresence>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 md:gap-20">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 md:gap-19">
               {displayedCountries.map((country) => (
                 <Link
                   href={`/country/${encodeURIComponent(country.cca3)}`}
@@ -127,6 +127,7 @@ const Home: FC = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 20 }}
+                    whileHover={{ scale: 1.025 }}
                     layout
                   >
                     <CountryCard country={country} />

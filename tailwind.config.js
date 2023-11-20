@@ -13,6 +13,9 @@ module.exports = {
       }
     },
     extend: {
+      gap: {
+        19: '3rem'
+      },
       fontSize: {
         'body-homepage': '14px',
         'body-detail': '16px'

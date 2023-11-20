@@ -64,6 +64,7 @@ const CountryDetail: FC<CountryDetailProps> = ({ country }) => {
               src={country.flags.svg || country.flags.png}
               alt={`${country.name.official} Flag`}
               fill
+              priority
               className="object-cover object-center w-full"
             />
           ) : (

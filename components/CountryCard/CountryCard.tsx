@@ -39,18 +39,19 @@ const CountryCard: FC<CountryCardProps> = ({ country }) => {
   }, [])
 
   return (
-    <article className="card rounded-lg shadow-md bg-white dark:bg-dark-blue flex flex-1 flex-col h-full">
+    <article className="card rounded-lg shadow-md hover:shadow-xl bg-white dark:bg-dark-blue flex flex-1 flex-col h-full">
       <div className="relative overflow-hidden h-52 md:h-48 lg:h-36">
         <Image
           src={country.flags.svg || country.flags.png}
           alt={`${countryName} Flag`}
+          priority
           fill
           className="rounded-t-lg object-cover"
         />
       </div>
       <div className="p-5 bg-white dark:bg-dark-blue rounded-b-lg">
-        <h3 className="leading-none pb-4 text-lg font-bold">{countryName}</h3>
-        <div className="text-very-dark-blue-text dark:text-white">
+        <h3 className="leading-none pb-4 text-md font-bold">{countryName}</h3>
+        <div className="text-very-dark-blue-text dark:text-white text-sm">
           <p>
             <span className="font-semibold">Population:</span>{' '}
             {country.population.toLocaleString()}
