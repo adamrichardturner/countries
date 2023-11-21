@@ -58,14 +58,15 @@ const CountryDetail: FC<CountryDetailProps> = ({ country }) => {
         <p>Back</p>
       </div>
       <article className="flex flex-col md:flex-row md:space-x-24 space-y-12 md:space-y-0">
-        <div className="shadow-md relative object-cover object-center h-52 sm:h-96 w-full md:w-1/2 overflow-hidden">
+        <div className="relative object-cover object-center w-full md:w-1/2 overflow-hidden">
           {country.flags.svg || country.flags.png ? (
             <Image
               src={country.flags.svg || country.flags.png}
               alt={`${country.name.official} Flag`}
-              fill
+              width={1920}
+              height={1080}
               priority
-              className="object-cover object-center w-full"
+              className="h-auto w-full shadow-md"
             />
           ) : (
             <p>No flag available</p>
@@ -108,7 +109,7 @@ const CountryDetail: FC<CountryDetailProps> = ({ country }) => {
                     <span className="text-sm"> {country.subRegion}</span>
                   </div>
                 )}
-                {country.capital && (
+                {country.capital?.length ? (
                   <div className="flex flex-row space-x-2">
                     <h3 className="text-sm font-semibold">Capital: </h3>
                     <span className="text-sm">
@@ -116,7 +117,7 @@ const CountryDetail: FC<CountryDetailProps> = ({ country }) => {
                       {country.capital.join(', ')}
                     </span>
                   </div>
-                )}
+                ) : null}
               </div>
               <div className="flex flex-col space-y-2">
                 {country.tld[0] && (
@@ -127,7 +128,7 @@ const CountryDetail: FC<CountryDetailProps> = ({ country }) => {
                     <span className="text-sm"> {country.tld[0]}</span>
                   </div>
                 )}
-                {country.currencies ? (
+                {country.currencies?.length ? (
                   <div className="flex flex-row space-x-2">
                     <h3 className="text-sm font-semibold">Currencies: </h3>
                     <span className="text-sm">
@@ -135,7 +136,7 @@ const CountryDetail: FC<CountryDetailProps> = ({ country }) => {
                     </span>
                   </div>
                 ) : null}
-                {country.languages ? (
+                {country.languages?.length ? (
                   <div className="flex flex-row space-x-2">
                     <h3 className="text-sm font-semibold">Languages: </h3>
                     <span className="text-sm">
