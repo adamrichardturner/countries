@@ -127,7 +127,6 @@ const Home: FC = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 20 }}
-                    whileHover={{ scale: 1.025 }}
                     layout
                   >
                     <CountryCard country={country} />

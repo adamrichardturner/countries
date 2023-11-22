@@ -136,7 +136,8 @@ const CountryDetail: FC<CountryDetailProps> = ({ country }) => {
                     </span>
                   </div>
                 ) : null}
-                {country.languages?.length ? (
+                {country.languages &&
+                Object.keys(country.languages).length > 0 ? (
                   <div className="flex flex-row space-x-2">
                     <h3 className="text-sm font-semibold">Languages: </h3>
                     <span className="text-sm">
@@ -146,31 +147,28 @@ const CountryDetail: FC<CountryDetailProps> = ({ country }) => {
                 ) : null}
               </div>
             </div>
-            {country.borderCountries && (
+            {country.borderCountries && country.borderCountries.length > 0 && (
               <div className="flex flex-col md:flex-row md:items-center md:space-x-3 pt-6 md:pt-0">
-                {country.borderCountries.length > 0 ? (
-                  <span className="leading-none font-bold text-sm pb-4 md:pb-0">
-                    Border Countries:{' '}
-                  </span>
-                ) : null}
+                <span className="leading-none font-bold text-sm pb-4 md:pb-0">
+                  Border Countries:{' '}
+                </span>
                 <div className="flex flex-wrap -mx-2">
-                  {country.borderCountries &&
-                    country.borderCountries.map((borderCountry, index) => (
-                      <Link
-                        href={`/country/${encodeURIComponent(
-                          borderCountry.code
-                        )}`}
-                        passHref
-                        key={borderCountry.code}
+                  {country.borderCountries.map((borderCountry, index) => (
+                    <Link
+                      href={`/country/${encodeURIComponent(
+                        borderCountry.code
+                      )}`}
+                      passHref
+                      key={borderCountry.code}
+                    >
+                      <div
+                        key={index}
+                        className="bg-white rounded-sm dark:bg-dark-blue text-very-dark-blue-text dark:text-white py-1 px-2 shadow-md text-center mx-2 mt-2 first:ml-0"
                       >
-                        <div
-                          key={index}
-                          className="bg-white rounded-sm dark:bg-dark-blue text-very-dark-blue-text dark:text-white py-1 px-2 shadow-md text-center mx-2 mt-2 first:ml-0"
-                        >
-                          <span className="text-xs">{borderCountry.name}</span>
-                        </div>
-                      </Link>
-                    ))}
+                        <span className="text-xs">{borderCountry.name}</span>
+                      </div>
+                    </Link>
+                  ))}
                 </div>
               </div>
             )}
