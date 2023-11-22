@@ -7,13 +7,11 @@ export default async function ({ params }: { params: { countryId: string } }) {
 
   const countryData = await countriesServices.fetchCountry({ countryId })
 
-  const country = countryData
-
   return (
     <div className="bg-very-light-gray dark:bg-very-dark-blue-bg min-h-screen">
       <Header />
       <main className="container p-6">
-        <CountryDetail country={country} />
+        <CountryDetail country={countryData} />
       </main>
     </div>
   )
