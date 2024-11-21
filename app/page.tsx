@@ -1,108 +1,82 @@
-'use client'
+"use client"
 
-import { FC, useState, useEffect, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import Header from '@/components/Header/Header'
-import SearchComponent from '@/components/SearchComponent/SearchComponent'
-import FilterComponent from '@/components/FilterComponent/FilterComponent'
-import CountryCard from '@/components/CountryCard/CountryCard'
-import { Country } from '@/interfaces'
-import countriesService from '../services/countries'
-import Link from 'next/link'
+import { FC } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import Header from "@/components/Header/Header"
+import SearchComponent from "@/components/SearchComponent/SearchComponent"
+import FilterComponent from "@/components/FilterComponent/FilterComponent"
+import CountryCard from "@/components/CountryCard/CountryCard"
+import Link from "next/link"
+import Image from "next/image"
+import SpinnerBlack from "@/assets/Spinner-Black.svg"
+import SpinnerWhite from "@/assets/Spinner-White.svg"
+import { useTheme } from "next-themes"
+import { useCountries } from "@/hooks/useCountries"
+import { InfiniteScroll } from "@/components/InfiniteScroll"
+import { ErrorBoundary } from "@/components/ErrorBoundary"
 
 const Home: FC = () => {
-  const [allCountries, setAllCountries] = useState<Country[]>([])
-  const [displayedCountries, setDisplayedCountries] = useState<Country[]>([])
-  const [searchTerm, setSearchTerm] = useState<string>('')
-  const [selectedRegion, setSelectedRegion] = useState<string>('')
-  const [isFetching, setIsFetching] = useState<boolean>(true)
-  const [pageSize] = useState<number>(25)
-  const [pageEndIndex, setPageEndIndex] = useState<number>(pageSize)
+  const {
+    displayedCountries,
+    allCountries,
+    isLoading,
+    searchTerm,
+    setSearchTerm,
+    selectedRegion,
+    setSelectedRegion,
+    pageSize,
+    pageEndIndex,
+    setPageEndIndex,
+    error,
+  } = useCountries()
 
-  const loader = useRef<HTMLDivElement | null>(null)
+  const { theme } = useTheme()
 
-  const fetchAllCountries = async () => {
-    setIsFetching(true)
-    try {
-      const response = await countriesService.fetchAllCountries()
-      const data = response.data
-      setAllCountries(data)
-      setIsFetching(false)
-    } catch (error) {
-      console.error('Failed to fetch all countries:', error)
-      setIsFetching(false)
-    }
+  const handleLoadMore = () => {
+    setPageEndIndex((prev) => prev + pageSize)
   }
 
-  // Fetch all countries on component mount
-  useEffect(() => {
-    fetchAllCountries()
-  }, [])
-
-  // Filter countries
-  useEffect(() => {
-    let filteredCountries = allCountries
-
-    if (selectedRegion !== 'All') {
-      filteredCountries = filteredCountries.filter((country) =>
-        country.region.includes(selectedRegion)
-      )
-    }
-
-    if (searchTerm) {
-      filteredCountries = filteredCountries.filter((country) =>
-        country.name.common.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    }
-
-    setDisplayedCountries(filteredCountries.slice(0, pageEndIndex))
-  }, [allCountries, searchTerm, selectedRegion, pageEndIndex])
-
-  // IntersectionObserver callback for infinite scroll
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const first = entries[0]
-        if (first.isIntersecting) {
-          if (pageEndIndex < allCountries.length) {
-            // Load the next set of countries if not all have been displayed
-            setPageEndIndex((prevIndex) => prevIndex + pageSize)
-          }
-        }
-      },
-      { threshold: 1.0 }
-    )
-
-    if (loader.current) {
-      observer.observe(loader.current)
-    }
-
-    return () => {
-      if (loader.current) {
-        observer.unobserve(loader.current)
-      }
-    }
-  }, [pageSize, allCountries, pageEndIndex])
-
-  // Search handling
   const handleSearchChange = (newSearchTerm: string) => {
-    setSelectedRegion('')
+    setSelectedRegion("")
     setSearchTerm(newSearchTerm)
-    setPageEndIndex(pageSize) // Reset pagination
+    setPageEndIndex(pageSize)
   }
 
-  // Region handling
-  const handleRegionChange = async (newRegion: string) => {
-    setSearchTerm('')
+  const handleRegionChange = (newRegion: string) => {
+    setSearchTerm("")
     setSelectedRegion(newRegion)
-    setPageEndIndex(pageSize) // Reset pagination
+    setPageEndIndex(pageSize)
+  }
+
+  if (error) {
+    return (
+      <ErrorBoundary fallback={<div>Error fetching countries</div>}>
+        <div>Error fetching countries</div>
+      </ErrorBoundary>
+    )
+  }
+
+  if (isLoading) {
+    return (
+      <div className='bg-very-light-gray dark:bg-very-dark-blue-bg min-h-screen flex flex-col'>
+        <Header />
+        <div className='text-center w-full h-full flex justify-center items-center flex-1 pb-[56px]'>
+          <Image
+            src={theme === "light" ? SpinnerBlack : SpinnerWhite}
+            alt='Loading...'
+            width={70}
+            height={70}
+          />
+        </div>
+      </div>
+    )
   }
 
   return (
-    <div className="bg-very-light-gray dark:bg-very-dark-blue-bg min-h-screen">
+    <div className='bg-very-light-gray dark:bg-very-dark-blue-bg min-h-screen'>
       <Header />
-      <main className="container p-6 space-y-12">
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-2 mt-6">
+      <main className='container p-6 space-y-12'>
+        <div className='flex flex-wrap items-center justify-between gap-4 mb-2 mt-6'>
           <SearchComponent
             searchTerm={searchTerm}
             onSearchTermChange={handleSearchChange}
@@ -112,33 +86,30 @@ const Home: FC = () => {
             onRegionChange={handleRegionChange}
           />
         </div>
-        {isFetching ? (
-          <div className="text-center">Loading...</div>
-        ) : (
-          <AnimatePresence>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 md:gap-19">
-              {displayedCountries.map((country) => (
-                <Link
-                  href={`/country/${encodeURIComponent(country.cca3)}`}
-                  passHref
-                  key={country.cca3}
+        <AnimatePresence>
+          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 md:gap-19'>
+            {displayedCountries.map((country) => (
+              <Link
+                href={`/country/${encodeURIComponent(country.cca3)}`}
+                passHref
+                key={country.cca3}
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  layout
                 >
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 20 }}
-                    layout
-                  >
-                    <CountryCard country={country} />
-                  </motion.div>
-                </Link>
-              ))}
-            </div>
-          </AnimatePresence>
-        )}
-        {pageEndIndex < allCountries.length && (
-          <div ref={loader} className="loading" />
-        )}
+                  <CountryCard country={country} />
+                </motion.div>
+              </Link>
+            ))}
+          </div>
+        </AnimatePresence>
+        <InfiniteScroll
+          onIntersect={handleLoadMore}
+          hasMore={pageEndIndex < (allCountries?.data.length || 0)}
+        />
       </main>
     </div>
   )
