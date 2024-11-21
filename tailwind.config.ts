@@ -5,7 +5,7 @@ const config: Config = {
   content: [
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
-    './app/**/*.{js,ts,jsx,tsx,mdx}'
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     extend: {
@@ -15,16 +15,16 @@ const config: Config = {
         'very-dark-blue-text': 'hsl(200, 15%, 8%)',
         'dark-gray': 'hsl(0, 0%, 52%)',
         'very-light-gray': 'hsl(0, 0%, 98%)',
-        white: 'hsl(0, 0%, 100%)'
+        white: 'hsl(0, 0%, 100%)',
       },
       fontSize: {
         'body-homepage': '14px',
-        'body-detail': '16px'
+        'body-detail': '16px',
       },
       fontWeight: {
         light: '300',
         semibold: '600',
-        bold: '800'
+        bold: '800',
       },
       container: {
         center: true,
@@ -34,8 +34,8 @@ const config: Config = {
           md: '100%', // Full width on medium screens
           lg: '1024px', // Max container width for large screens
           xl: '1200px', // Max container width for extra large screens
-          '2xl': '1280px' // Max container width for 2xl screens
-        }
+          '2xl': '1280px', // Max container width for 2xl screens
+        },
       },
       screens: {
         xs: '360px',
@@ -43,11 +43,11 @@ const config: Config = {
         md: '768px',
         lg: '1024px',
         xl: '1280px',
-        '2xl': '1536px'
-      }
-    }
+        '2xl': '1536px',
+      },
+    },
   },
-  plugins: []
+  plugins: [],
 }
 
 export default config

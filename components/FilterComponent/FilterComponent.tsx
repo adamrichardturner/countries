@@ -6,14 +6,14 @@ import {
   SelectGroup,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from '@/components/ui/select'
 
 const regions = ['Africa', 'Americas', 'Asia', 'Europe', 'Oceania']
 
 const FilterComponent: FC<FilterComponentProps> = ({
   selectedRegion,
-  onRegionChange
+  onRegionChange,
 }) => {
   const handleRegionChange = (region: string) => {
     // Check if the selected region is 'Filter by Region' and set it to 'All'

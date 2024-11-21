@@ -1,0 +1,10 @@
+node_modules
+build
+coverage
+.next
+.env
+.prettierrc
+.prettierrc.json
+.prettierrc.js
+.prettierrc.yaml
+.prettierrc.yml

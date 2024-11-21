@@ -5,7 +5,7 @@ import {
   FetchCountryParams,
   FetchByRegionParams,
   CountryName,
-} from "@/interfaces"
+} from '@/interfaces'
 
 const baseUrl = `https://restcountries.com/v3.1/`
 const query = `?fields=name,flags,nativeName,population,region,subRegion,capital,tld,currencies,languages,borders,borderCountries,cca3`
@@ -20,7 +20,7 @@ async function fetchAllCountries(): Promise<{ data: Country[] }> {
     }) as Country[]
     return { data }
   } catch (error) {
-    console.error("Error fetching all countries", error)
+    console.error('Error fetching all countries', error)
     throw error
   }
 }
@@ -37,7 +37,7 @@ async function fetchCountries(
     const data = (await response.json()) as Country[]
     return { data }
   } catch (error) {
-    console.error("Error fetching countries with pagination", error)
+    console.error('Error fetching countries with pagination', error)
     throw error
   }
 }
@@ -57,7 +57,7 @@ export async function fetchCountriesByName(
     const data = (await response.json()) as Country[]
     return { data }
   } catch (error) {
-    console.error("Error fetching countries by name", error)
+    console.error('Error fetching countries by name', error)
     throw error
   }
 }
@@ -68,7 +68,7 @@ async function fetchCountryNameByCode(countryCode: string): Promise<string> {
     const country = (await response.json()) as { name: CountryName }
     return country.name.common
   } catch (error) {
-    console.error("Error fetching country name by code", error)
+    console.error('Error fetching country name by code', error)
     throw error
   }
 }
@@ -93,7 +93,7 @@ export async function fetchCountry(
 
     return country
   } catch (error) {
-    console.error("Error fetching country", error)
+    console.error('Error fetching country', error)
     throw error
   }
 }
@@ -107,7 +107,7 @@ export async function fetchByRegion(
     const data = (await response.json()) as Country[]
     return { data }
   } catch (error) {
-    console.error("Error fetching countries by region", error)
+    console.error('Error fetching countries by region', error)
     throw error
   }
 }

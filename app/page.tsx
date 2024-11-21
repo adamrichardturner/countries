@@ -1,21 +1,20 @@
-"use client"
+'use client'
 
-import { FC } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import Header from "@/components/Header/Header"
-import SearchComponent from "@/components/SearchComponent/SearchComponent"
-import FilterComponent from "@/components/FilterComponent/FilterComponent"
-import CountryCard from "@/components/CountryCard/CountryCard"
-import Link from "next/link"
-import Image from "next/image"
-import SpinnerBlack from "@/assets/Spinner-Black.svg"
-import SpinnerWhite from "@/assets/Spinner-White.svg"
-import { useTheme } from "next-themes"
-import { useCountries } from "@/hooks/useCountries"
-import { InfiniteScroll } from "@/components/InfiniteScroll"
-import { ErrorBoundary } from "@/components/ErrorBoundary"
+import { FC, useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import Header from '@/components/Header/Header'
+import SearchComponent from '@/components/SearchComponent/SearchComponent'
+import FilterComponent from '@/components/FilterComponent/FilterComponent'
+import CountryCard from '@/components/CountryCard/CountryCard'
+import Link from 'next/link'
+import { useTheme } from 'next-themes'
+import { useCountries } from '@/hooks/useCountries'
+import { InfiniteScroll } from '@/components/InfiniteScroll'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
+import { LoadingSpinner } from '@/components/LoadingSpinner'
 
 const Home: FC = () => {
+  const [mounted, setMounted] = useState(false)
   const {
     displayedCountries,
     allCountries,
@@ -30,6 +29,13 @@ const Home: FC = () => {
     error,
   } = useCountries()
 
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Don't render anything until mounted
+  if (!mounted) return null
+
   const { theme } = useTheme()
 
   const handleLoadMore = () => {
@@ -37,13 +43,13 @@ const Home: FC = () => {
   }
 
   const handleSearchChange = (newSearchTerm: string) => {
-    setSelectedRegion("")
+    setSelectedRegion('')
     setSearchTerm(newSearchTerm)
     setPageEndIndex(pageSize)
   }
 
   const handleRegionChange = (newRegion: string) => {
-    setSearchTerm("")
+    setSearchTerm('')
     setSelectedRegion(newRegion)
     setPageEndIndex(pageSize)
   }
@@ -58,25 +64,18 @@ const Home: FC = () => {
 
   if (isLoading) {
     return (
-      <div className='bg-very-light-gray dark:bg-very-dark-blue-bg min-h-screen flex flex-col'>
+      <div className="bg-very-light-gray dark:bg-very-dark-blue-bg min-h-screen flex flex-col">
         <Header />
-        <div className='text-center w-full h-full flex justify-center items-center flex-1 pb-[56px]'>
-          <Image
-            src={theme === "light" ? SpinnerBlack : SpinnerWhite}
-            alt='Loading...'
-            width={70}
-            height={70}
-          />
-        </div>
+        <LoadingSpinner />
       </div>
     )
   }
 
   return (
-    <div className='bg-very-light-gray dark:bg-very-dark-blue-bg min-h-screen'>
+    <div className="bg-very-light-gray dark:bg-very-dark-blue-bg min-h-screen">
       <Header />
-      <main className='container p-6 space-y-12'>
-        <div className='flex flex-wrap items-center justify-between gap-4 mb-2 mt-6'>
+      <main className="container p-6 space-y-12">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-2 mt-6">
           <SearchComponent
             searchTerm={searchTerm}
             onSearchTermChange={handleSearchChange}
@@ -87,7 +86,7 @@ const Home: FC = () => {
           />
         </div>
         <AnimatePresence>
-          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 md:gap-19'>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 md:gap-19">
             {displayedCountries.map((country) => (
               <Link
                 href={`/country/${encodeURIComponent(country.cca3)}`}

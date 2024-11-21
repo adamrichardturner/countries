@@ -4,7 +4,7 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons'
 
 const SearchComponent: React.FC<SearchComponentProps> = ({
   searchTerm,
-  onSearchTermChange
+  onSearchTermChange,
 }) => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onSearchTermChange(event.target.value)

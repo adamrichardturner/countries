@@ -1,14 +1,14 @@
-"use client"
+'use client'
 
-import { useState, useEffect } from "react"
-import useSWR from "swr"
-import { Country } from "@/interfaces"
-import countriesService from "@/services/countries"
+import { useState, useEffect } from 'react'
+import useSWR from 'swr'
+import { Country } from '@/interfaces'
+import countriesService from '@/services/countries'
 
 export const useCountries = () => {
   const [displayedCountries, setDisplayedCountries] = useState<Country[]>([])
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedRegion, setSelectedRegion] = useState("")
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedRegion, setSelectedRegion] = useState('')
   const [pageSize] = useState(25)
   const [pageEndIndex, setPageEndIndex] = useState(pageSize)
 
@@ -16,14 +16,14 @@ export const useCountries = () => {
     data: allCountries,
     error,
     isLoading,
-  } = useSWR("allCountries", countriesService.fetchAllCountries)
+  } = useSWR('allCountries', countriesService.fetchAllCountries)
 
   // Filter logic
   useEffect(() => {
     if (!allCountries) return
     const filteredCountries = allCountries.data.filter((country) => {
       const matchesRegion =
-        selectedRegion === "All" ||
+        selectedRegion === 'All' ||
         !selectedRegion ||
         country.region.includes(selectedRegion)
       const matchesSearch =

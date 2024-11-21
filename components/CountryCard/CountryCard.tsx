@@ -1,14 +1,14 @@
-import { FC, useEffect } from "react"
-import Image from "next/image"
-import { CountryCardProps } from "@/interfaces"
-import { AspectRatio } from "../ui/aspect-ratio"
+import { FC, useEffect } from 'react'
+import Image from 'next/image'
+import { CountryCardProps } from '@/interfaces'
+import { AspectRatio } from '../ui/aspect-ratio'
 
 const CountryCard: FC<CountryCardProps> = ({ country }) => {
   useEffect(() => {
     // Function to calculate and set minimum height
     const setMinHeightToCards = () => {
       const cards = document.querySelectorAll(
-        ".card"
+        '.card'
       ) as NodeListOf<HTMLElement> // Typecast as HTMLElement
       let maxHeight = 0
 
@@ -30,41 +30,41 @@ const CountryCard: FC<CountryCardProps> = ({ country }) => {
     setMinHeightToCards()
 
     // Attach an event listener for window resize
-    window.addEventListener("resize", setMinHeightToCards)
+    window.addEventListener('resize', setMinHeightToCards)
 
     // Clean up the event listener on unmount
     return () => {
-      window.removeEventListener("resize", setMinHeightToCards)
+      window.removeEventListener('resize', setMinHeightToCards)
     }
   }, [])
 
   return (
-    <article className='card rounded-lg shadow-md hover:shadow-xl bg-white dark:bg-dark-blue flex flex-1 flex-col h-full'>
-      <div className='relative overflow-hidden h-52 md:h-48 lg:h-36'>
+    <article className="card rounded-lg shadow-md hover:shadow-xl bg-white dark:bg-dark-blue flex flex-1 flex-col h-full">
+      <div className="relative overflow-hidden h-52 md:h-48 lg:h-36">
         <AspectRatio ratio={16 / 9}>
           <Image
             src={country.flags.svg || country.flags.png}
             alt={`${country.name.official || country.name.common} Flag`}
             priority
             fill
-            className='rounded-t-lg object-cover'
+            className="rounded-t-lg object-cover"
           />
         </AspectRatio>
       </div>
-      <div className='p-5 bg-white dark:bg-dark-blue rounded-b-lg'>
-        <h3 className='leading-none pb-4 text-md font-bold'>
+      <div className="p-5 bg-white dark:bg-dark-blue rounded-b-lg">
+        <h3 className="leading-none pb-4 text-md font-bold">
           {country.name.official || country.name.common}
         </h3>
-        <div className='text-very-dark-blue-text dark:text-white text-sm'>
+        <div className="text-very-dark-blue-text dark:text-white text-sm">
           <p>
-            <span className='font-semibold'>Population:</span>{" "}
+            <span className="font-semibold">Population:</span>{' '}
             {country.population.toLocaleString()}
           </p>
           <p>
-            <span className='font-semibold'>Region:</span> {country.region}
+            <span className="font-semibold">Region:</span> {country.region}
           </p>
           <p>
-            <span className='font-semibold'>Capital:</span> {country.capital}
+            <span className="font-semibold">Capital:</span> {country.capital}
           </p>
         </div>
       </div>

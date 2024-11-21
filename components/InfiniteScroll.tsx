@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react"
+import { useEffect, useRef } from 'react'
 
 interface InfiniteScrollProps {
   onIntersect: () => void
@@ -18,7 +18,7 @@ export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
           onIntersect()
         }
       },
-      { rootMargin: "400px" }
+      { rootMargin: '400px' }
     )
 
     if (loader.current) {
@@ -28,5 +28,5 @@ export const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
     return () => observer.disconnect()
   }, [onIntersect, hasMore])
 
-  return hasMore ? <div ref={loader} className='loading' /> : null
+  return hasMore ? <div ref={loader} className="loading" /> : null
 }
