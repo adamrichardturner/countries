@@ -17,16 +17,13 @@ const CountryDetail: FC<CountryDetailProps> = ({ country }) => {
     }
   }
 
-  // Function to get a displayable string from native names object
   const getNativeNameDisplay = (nativeNames: {
     [key: string]: { official: string; common: string }
   }): string => {
-    // This will take the first nativeName entry and return its official name.
     const [firstNativeName] = Object.values(nativeNames)
     return firstNativeName?.common || 'No native name available'
   }
 
-  // Function to get a displayable string from currencies object
   const getCurrenciesDisplay = (currencies: {
     [key: string]: { name: string; symbol: string }
   }): string => {
@@ -35,20 +32,10 @@ const CountryDetail: FC<CountryDetailProps> = ({ country }) => {
       .join(', ')
   }
 
-  // Function to get a displayable string from languages object
   const getLanguagesDisplay = (languages: {
     [key: string]: string
   }): string => {
     return Object.values(languages).join(', ')
-  }
-
-  // Determine the longest border country name for minWidth
-  const longestBorderCountryNameLength = Math.max(
-    ...(country.borderCountries?.map((country) => country.name.length) || [0])
-  )
-  // Convert this length into a suitable minWidth in 'em' units
-  const minWidthStyle = {
-    minWidth: `${longestBorderCountryNameLength * 0.6}em`,
   }
 
   return (

@@ -7,10 +7,8 @@ import SearchComponent from '@/components/SearchComponent/SearchComponent'
 import FilterComponent from '@/components/FilterComponent/FilterComponent'
 import CountryCard from '@/components/CountryCard/CountryCard'
 import Link from 'next/link'
-import { useTheme } from 'next-themes'
 import { useCountries } from '@/hooks/useCountries'
 import { InfiniteScroll } from '@/components/InfiniteScroll'
-import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 
 const Home: FC = () => {
@@ -33,10 +31,7 @@ const Home: FC = () => {
     setMounted(true)
   }, [])
 
-  // Don't render anything until mounted
   if (!mounted) return null
-
-  const { theme } = useTheme()
 
   const handleLoadMore = () => {
     setPageEndIndex((prev) => prev + pageSize)
@@ -52,14 +47,6 @@ const Home: FC = () => {
     setSearchTerm('')
     setSelectedRegion(newRegion)
     setPageEndIndex(pageSize)
-  }
-
-  if (error) {
-    return (
-      <ErrorBoundary fallback={<div>Error fetching countries</div>}>
-        <div>Error fetching countries</div>
-      </ErrorBoundary>
-    )
   }
 
   if (isLoading) {
