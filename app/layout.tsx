@@ -12,9 +12,44 @@ const nunitoSans = Nunito_Sans({
 })
 
 export const metadata: Metadata = {
-  title: 'REST Countries API with Dark Mode by Adam Turner',
+  metadataBase: new URL(
+    process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : 'http://localhost:3000'
+  ),
+  title: 'Countries API Dashboard with Dark Mode by Adam Turner',
   description:
     'Next.js, Tailwind and TypeScript app using Countries API by Adam Turner',
+  openGraph: {
+    title: 'Countries API Dashboard with Dark Mode by Adam Turner',
+    description:
+      'Next.js, Tailwind and TypeScript app using Countries API by Adam Turner',
+    url: '/',
+    siteName: 'Countries API Dashboard',
+    images: [
+      {
+        url: '/opengraph-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'REST Countries API by Adam Turner',
+      },
+    ],
+    locale: 'en_GB',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Countries API Dashboard with Dark Mode by Adam Turner',
+    description:
+      'Next.js, Tailwind and TypeScript app using Countries API by Adam Turner',
+    images: [
+      {
+        url: '/opengraph-image.png',
+        alt: 'Countries API Dashboard by Adam Turner',
+      },
+    ],
+    creator: '@devadam88',
+  },
 }
 
 export default function RootLayout({
@@ -23,8 +58,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={nunitoSans.className}>
+    <html lang="en" className={nunitoSans.className}>
+      <body>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
