@@ -10,6 +10,7 @@ import Link from 'next/link'
 import { useCountries } from '@/hooks/useCountries'
 import { InfiniteScroll } from '@/components/InfiniteScroll'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
+import BackToTopButton from '@/components/BackToTopButton/BackToTopButton'
 
 const Home: FC = () => {
   const [mounted, setMounted] = useState(false)
@@ -97,6 +98,7 @@ const Home: FC = () => {
           hasMore={pageEndIndex < (allCountries?.data.length || 0)}
         />
       </main>
+      <BackToTopButton />
     </div>
   )
 }
