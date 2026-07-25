@@ -1,6 +1,6 @@
 'use client'
 
-import { FC, useSyncExternalStore } from 'react'
+import { FC } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Header from '@/components/Header/Header'
 import SearchComponent from '@/components/SearchComponent/SearchComponent'
@@ -12,24 +12,7 @@ import { InfiniteScroll } from '@/components/InfiniteScroll'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import BackToTopButton from '@/components/BackToTopButton/BackToTopButton'
 
-const emptySubscribe = () => {
-  return () => {}
-}
-
-const useIsClient = () => {
-  return useSyncExternalStore(
-    emptySubscribe,
-    () => {
-      return true
-    },
-    () => {
-      return false
-    }
-  )
-}
-
 const Home: FC = () => {
-  const isClient = useIsClient()
   const {
     displayedCountries,
     allCountries,
@@ -42,10 +25,6 @@ const Home: FC = () => {
     pageEndIndex,
     setPageEndIndex,
   } = useCountries()
-
-  if (!isClient) {
-    return null
-  }
 
   const handleLoadMore = () => {
     setPageEndIndex((prev) => {
