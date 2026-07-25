@@ -92,9 +92,9 @@ const Home: FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 md:gap-19">
             {displayedCountries.map((country) => (
               <Link
-                href={`/country/${encodeURIComponent(country.cca3)}`}
+                href={`/country/${encodeURIComponent(country.codes.alpha_3)}`}
                 passHref
-                key={country.cca3}
+                key={country.codes.alpha_3}
               >
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
