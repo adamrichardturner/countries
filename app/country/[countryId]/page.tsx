@@ -2,7 +2,10 @@ import Header from '@/components/Header/Header'
 import countriesServices from '../../../services/countries'
 import CountryDetail from '@/components/CountryDetail/CountryDetail'
 
-export default async function ({ params }: { params: { countryId: string } }) {
+export default async function CountryPage(props: {
+  params: Promise<{ countryId: string }>
+}) {
+  const params = await props.params
   const { countryId } = params
 
   const countryData = await countriesServices.fetchCountry({ countryId })

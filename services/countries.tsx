@@ -79,7 +79,7 @@ export async function fetchCountry(
   const { countryId } = params
   try {
     const response = await fetch(`${baseUrl}alpha/${countryId}${query}`)
-    let country = (await response.json()) as Country
+    const country = (await response.json()) as Country
 
     if (country.borders) {
       const borderCountries = await Promise.all(
@@ -112,10 +112,12 @@ export async function fetchByRegion(
   }
 }
 
-export default {
+const countriesServices = {
   fetchAllCountries,
   fetchCountries,
   fetchCountriesByName,
   fetchCountry,
   fetchByRegion,
 }
+
+export default countriesServices

@@ -1,11 +1,59 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import countriesData from '../data.json'
-import { Country } from '@/interfaces'
+import { Country, FallbackCountry } from '@/interfaces'
+
+const fallbackCountries = countriesData as FallbackCountry[]
+
+const transformFallbackCountry = (country: FallbackCountry): Country => {
+  const languageCode = country.languages?.[0]?.iso639_1 ?? 'default'
+  const primaryCurrency = country.currencies?.[0]
+
+  return {
+    name: {
+      common: country.name,
+      official: country.name,
+      nativeName: {
+        [languageCode]: {
+          official: country.name,
+          common: country.name,
+        },
+      },
+    },
+    flags: {
+      svg: country.flag,
+      png: country.flag,
+    },
+    population: country.population,
+    region: country.region,
+    capital: [country.capital],
+    cca2: country.alpha2Code,
+    cca3: country.alpha3Code,
+    nativeName: {
+      [languageCode]: {
+        official: country.name,
+        common: country.name,
+      },
+    },
+    subRegion: country.subregion,
+    tld: country.topLevelDomain,
+    currencies: primaryCurrency
+      ? {
+          [primaryCurrency.code]: {
+            name: primaryCurrency.name,
+            symbol: primaryCurrency.symbol,
+          },
+        }
+      : {},
+    languages: Object.fromEntries(
+      (country.languages ?? []).map((lang) => [lang.iso639_1, lang.name])
+    ),
+    borders: country.borders ?? [],
+  }
+}
 
 export const useCountries = () => {
-  const [displayedCountries, setDisplayedCountries] = useState<Country[]>([])
   const [allCountries, setAllCountries] = useState<{ data: Country[] } | null>(
     null
   )
@@ -19,8 +67,10 @@ export const useCountries = () => {
   useEffect(() => {
     const fetchCountries = async () => {
       try {
-        const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('Request timeout')), 10000)
+        const timeoutPromise = new Promise<never>((_, reject) => {
+          setTimeout(() => {
+            reject(new Error('Request timeout'))
+          }, 10000)
         })
 
         const fetchPromise = fetch('https://restcountries.com/v3.1/all')
@@ -35,74 +85,32 @@ export const useCountries = () => {
         }
 
         const data = (await response.json()) as Country[]
-        const sortedData = data.sort((a, b) =>
-          a.name.common.localeCompare(b.name.common)
-        )
+        const sortedData = data.sort((a, b) => {
+          return a.name.common.localeCompare(b.name.common)
+        })
         setAllCountries({ data: sortedData })
         setIsLoading(false)
       } catch (err) {
         console.error('Error fetching countries:', err)
-        // Transform the fallback data to match the API data structure
-        const transformedData = (countriesData as any[]).map((country) => ({
-          name: {
-            common: country.name,
-            official: country.name,
-            nativeName: {
-              [country.languages?.[0]?.iso639_1 || 'default']: {
-                official: country.name,
-                common: country.name,
-              },
-            },
-          },
-          flags: {
-            svg: country.flag,
-            png: country.flag,
-          },
-          population: country.population,
-          region: country.region,
-          capital: [country.capital],
-          cca2: country.alpha2Code,
-          cca3: country.alpha3Code,
-          nativeName: {
-            [country.languages?.[0]?.iso639_1 || 'default']: {
-              official: country.name,
-              common: country.name,
-            },
-          },
-          subRegion: country.subregion,
-          tld: country.topLevelDomain,
-          currencies: country.currencies
-            ? {
-                [Object.keys(country.currencies)[0]]: {
-                  name: country.currencies[0]?.name || '',
-                  symbol: country.currencies[0]?.symbol || '',
-                },
-              }
-            : {},
-          languages: Object.fromEntries(
-            (country.languages || []).map((lang: any) => [
-              lang.iso639_1,
-              lang.name,
-            ])
-          ),
-          borders: country.borders || [],
-        }))
+        const transformedData = fallbackCountries.map(transformFallbackCountry)
 
-        const sortedFallbackData = transformedData.sort((a, b) =>
-          a.name.common.localeCompare(b.name.common)
-        )
+        const sortedFallbackData = transformedData.sort((a, b) => {
+          return a.name.common.localeCompare(b.name.common)
+        })
         setAllCountries({ data: sortedFallbackData })
         setError(err instanceof Error ? err : new Error('An error occurred'))
         setIsLoading(false)
       }
     }
 
-    fetchCountries()
+    void fetchCountries()
   }, [])
 
-  // Filter logic
-  useEffect(() => {
-    if (!allCountries) return
+  const displayedCountries = useMemo(() => {
+    if (!allCountries) {
+      return []
+    }
+
     const filteredCountries = allCountries.data.filter((country) => {
       const matchesRegion =
         selectedRegion === 'All' ||
@@ -114,7 +122,7 @@ export const useCountries = () => {
       return matchesRegion && matchesSearch
     })
 
-    setDisplayedCountries(filteredCountries.slice(0, pageEndIndex))
+    return filteredCountries.slice(0, pageEndIndex)
   }, [allCountries, searchTerm, selectedRegion, pageEndIndex])
 
   return {

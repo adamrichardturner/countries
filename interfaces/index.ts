@@ -68,3 +68,29 @@ export interface FilterComponentProps {
   selectedRegion: string
   onRegionChange: (region: string) => void
 }
+
+export interface FallbackLanguage {
+  iso639_1: string
+  name: string
+}
+
+export interface FallbackCurrency {
+  code: string
+  name: string
+  symbol: string
+}
+
+export interface FallbackCountry {
+  name: string
+  flag: string
+  population: number
+  region: string
+  capital: string
+  alpha2Code: string
+  alpha3Code: string
+  languages?: FallbackLanguage[]
+  subregion: string
+  topLevelDomain: string[]
+  currencies?: FallbackCurrency[]
+  borders?: string[]
+}

@@ -1,6 +1,6 @@
 'use client'
 
-import { FC, useState, useEffect } from 'react'
+import { FC, useSyncExternalStore } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Header from '@/components/Header/Header'
 import SearchComponent from '@/components/SearchComponent/SearchComponent'
@@ -12,8 +12,24 @@ import { InfiniteScroll } from '@/components/InfiniteScroll'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
 import BackToTopButton from '@/components/BackToTopButton/BackToTopButton'
 
+const emptySubscribe = () => {
+  return () => {}
+}
+
+const useIsClient = () => {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => {
+      return true
+    },
+    () => {
+      return false
+    }
+  )
+}
+
 const Home: FC = () => {
-  const [mounted, setMounted] = useState(false)
+  const isClient = useIsClient()
   const {
     displayedCountries,
     allCountries,
@@ -25,17 +41,16 @@ const Home: FC = () => {
     pageSize,
     pageEndIndex,
     setPageEndIndex,
-    error,
   } = useCountries()
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  if (!mounted) return null
+  if (!isClient) {
+    return null
+  }
 
   const handleLoadMore = () => {
-    setPageEndIndex((prev) => prev + pageSize)
+    setPageEndIndex((prev) => {
+      return prev + pageSize
+    })
   }
 
   const handleSearchChange = (newSearchTerm: string) => {
@@ -95,7 +110,7 @@ const Home: FC = () => {
         </AnimatePresence>
         <InfiniteScroll
           onIntersect={handleLoadMore}
-          hasMore={pageEndIndex < (allCountries?.data.length || 0)}
+          hasMore={pageEndIndex < (allCountries?.data.length ?? 0)}
         />
       </main>
       <BackToTopButton />
