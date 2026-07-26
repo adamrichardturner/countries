@@ -1,37 +1,72 @@
-export interface NativeName {
-  official: string
-  common: string
-}
-
-export interface CountryName {
+export interface CountryNameForms {
   common: string
   official: string
-  nativeName: { [languageCode: string]: NativeName }
 }
 
-export interface CountryFlags {
-  svg: string
-  png: string
+export interface CountryNames {
+  common: string
+  official: string
+  native: Record<string, CountryNameForms>
+}
+
+export interface CountryCodes {
+  alpha_2: string
+  alpha_3: string
+}
+
+export interface CountryCapital {
+  name: string
+}
+
+export interface CountryFlag {
+  url_svg: string
+  url_png: string
+  description?: string
+}
+
+export interface CountryCurrency {
+  code: string
+  name: string
+  symbol: string
+}
+
+export interface CountryLanguage {
+  name: string
+  iso639_1?: string
+  native_name?: string
+}
+
+export interface BorderCountry {
+  name: string
+  code: string
 }
 
 export interface Country {
-  name: CountryName
-  flags: CountryFlags
+  names: CountryNames
+  codes: CountryCodes
+  flag: CountryFlag
   population: number
   region: string
-  capital: string[]
-  cca2: string
-  cca3: string
-  nativeName: { [languageCode: string]: NativeName }
-  subRegion: string
-  tld: string[]
-  currencies: { [currencyCode: string]: { name: string; symbol: string } }
-  languages: { [languageCode: string]: string }
+  subregion: string
+  capitals: CountryCapital[]
+  tlds: string[]
+  currencies: CountryCurrency[]
+  languages: CountryLanguage[]
   borders?: string[]
-  borderCountries?: {
-    name: string
-    code: string
-  }[]
+  borderCountries?: BorderCountry[]
+}
+
+export interface CountriesListMeta {
+  total: number
+  count: number
+  limit: number
+  offset: number
+  more: boolean
+}
+
+export interface CountriesListResponse {
+  data: Country[]
+  meta?: CountriesListMeta
 }
 
 export interface CountryCardProps {
@@ -43,12 +78,16 @@ export interface CountryDetailProps {
 }
 
 export interface FetchCountriesParams {
-  page: number
+  page?: number
   pageSize: number
+  q?: string
+  region?: string
 }
 
-export interface FetchCountriesByNameParams extends FetchCountriesParams {
+export interface FetchCountriesByNameParams {
   searchTerm: string
+  page?: number
+  pageSize: number
 }
 
 export interface FetchCountryParams {
@@ -57,6 +96,8 @@ export interface FetchCountryParams {
 
 export interface FetchByRegionParams {
   region: string
+  page?: number
+  pageSize?: number
 }
 
 export interface SearchComponentProps {
@@ -67,4 +108,30 @@ export interface SearchComponentProps {
 export interface FilterComponentProps {
   selectedRegion: string
   onRegionChange: (region: string) => void
+}
+
+export interface FallbackLanguage {
+  iso639_1: string
+  name: string
+}
+
+export interface FallbackCurrency {
+  code: string
+  name: string
+  symbol: string
+}
+
+export interface FallbackCountry {
+  name: string
+  flag: string
+  population: number
+  region: string
+  capital: string
+  alpha2Code: string
+  alpha3Code: string
+  languages?: FallbackLanguage[]
+  subregion: string
+  topLevelDomain: string[]
+  currencies?: FallbackCurrency[]
+  borders?: string[]
 }

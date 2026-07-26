@@ -1,6 +1,6 @@
 'use client'
 
-import { FC, useState, useEffect } from 'react'
+import { FC } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Header from '@/components/Header/Header'
 import SearchComponent from '@/components/SearchComponent/SearchComponent'
@@ -13,7 +13,6 @@ import { LoadingSpinner } from '@/components/LoadingSpinner'
 import BackToTopButton from '@/components/BackToTopButton/BackToTopButton'
 
 const Home: FC = () => {
-  const [mounted, setMounted] = useState(false)
   const {
     displayedCountries,
     allCountries,
@@ -25,17 +24,12 @@ const Home: FC = () => {
     pageSize,
     pageEndIndex,
     setPageEndIndex,
-    error,
   } = useCountries()
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  if (!mounted) return null
-
   const handleLoadMore = () => {
-    setPageEndIndex((prev) => prev + pageSize)
+    setPageEndIndex((prev) => {
+      return prev + pageSize
+    })
   }
 
   const handleSearchChange = (newSearchTerm: string) => {
@@ -77,9 +71,9 @@ const Home: FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 md:gap-19">
             {displayedCountries.map((country) => (
               <Link
-                href={`/country/${encodeURIComponent(country.cca3)}`}
+                href={`/country/${encodeURIComponent(country.codes.alpha_3)}`}
                 passHref
-                key={country.cca3}
+                key={country.codes.alpha_3}
               >
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -95,7 +89,7 @@ const Home: FC = () => {
         </AnimatePresence>
         <InfiniteScroll
           onIntersect={handleLoadMore}
-          hasMore={pageEndIndex < (allCountries?.data.length || 0)}
+          hasMore={pageEndIndex < (allCountries?.data.length ?? 0)}
         />
       </main>
       <BackToTopButton />

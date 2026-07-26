@@ -1,7 +1,7 @@
 'use client'
 
 import { FC } from 'react'
-import { useTheme } from 'next-themes'
+import { useTheme } from '@teispace/next-themes'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMoon, faLightbulb } from '@fortawesome/free-solid-svg-icons'
 import Link from 'next/link'
