@@ -2,15 +2,24 @@ import type { Metadata } from 'next'
 import { ThemeProvider } from '@/components/theme-provider'
 import { QueryProvider } from '@/components/providers/query-provider'
 import { Nunito_Sans } from 'next/font/google'
+import { getTheme, getThemeScript } from '@teispace/next-themes/server'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 import { config } from '@fortawesome/fontawesome-svg-core'
 import './globals.css'
+
 config.autoAddCss = false
 
 const nunitoSans = Nunito_Sans({
   subsets: ['latin'],
   weight: ['300', '600', '800'],
 })
+
+const THEME_SCRIPT_OPTIONS = {
+  attribute: 'class' as const,
+  defaultTheme: 'dark',
+  enableSystem: false,
+  themes: ['light', 'dark'],
+}
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -53,19 +62,25 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const storedTheme = await getTheme({ themes: THEME_SCRIPT_OPTIONS.themes })
+  const initialTheme = storedTheme ?? THEME_SCRIPT_OPTIONS.defaultTheme
+  const themeScript = getThemeScript({
+    ...THEME_SCRIPT_OPTIONS,
+    initialTheme,
+  })
+
   return (
     <html lang="en" className={nunitoSans.className} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          disableTransitionOnChange
-        >
+        <ThemeProvider initialTheme={initialTheme} noScript>
           <QueryProvider>{children}</QueryProvider>
         </ThemeProvider>
       </body>
